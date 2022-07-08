@@ -2,9 +2,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.huawei.bigdata</groupId>
+	<groupId>com.project.bigdata</groupId>
 	<artifactId>yarnMonitor</artifactId>
-	<version>0.1</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>Yarn-Monitor</name>
@@ -169,7 +169,7 @@
 							</filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.huawei.bigdata.YarnMonitor</mainClass>
+									<mainClass>com.project.bigdata.YarnMonitor</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

@@ -1,7 +1,7 @@
-package com.huawei.bigdata;
+package com.project.bigdata;
 
 import com.alibaba.fastjson.JSONObject;
-import com.huawei.bigdata.utils.ApplicationSource;
+import com.project.bigdata.utils.ApplicationSource;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;

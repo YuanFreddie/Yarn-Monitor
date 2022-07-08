@@ -1,4 +1,4 @@
-package com.huawei.bigdata.utils;
+package com.project.bigdata.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.flink.configuration.Configuration;
@@ -55,7 +55,7 @@ public class ApplicationSource extends RichSourceFunction<JSONObject> {
                 map.put("finalStatus", finalStatus);
                 ApplicationResourceUsageReport resource = app.getApplicationResourceUsageReport();
                 Resource usedResources = resource.getUsedResources();
-                int usedMemory = usedResources.getMemory();
+                long usedMemory = usedResources.getMemorySize();
                 map.put("usedMemory", usedMemory);
                 int usedCores = usedResources.getVirtualCores();
                 map.put("usedCores", usedCores);
