@@ -17,7 +17,7 @@ public class ApplicationSource extends RichSourceFunction<JSONObject> {
     YarnClient yarnClient;
 
     @Override
-    public void open(Configuration parameters) throws Exception {
+    public void open(Configuration parameters) {
         yarnClient = YarnClient.createYarnClient();
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
         yarnClient.init(conf);

@@ -20,22 +20,19 @@ public class YarnMonitor {
         DataStreamSource<JSONObject> sourceStream = env.addSource(new ApplicationSource());
 
         // 计算已经结束的任务的资源消耗
-        SingleOutputStreamOperator<String> sinkStream = sourceStream.map(new MapFunction<JSONObject, String>() {
-            @Override
-            public String map(JSONObject input) throws Exception {
-                Integer usedMemory = input.getInteger("usedMemory");
-                Integer usedCores = input.getInteger("usedCores");
-                if (usedMemory == -1 && usedCores == -1) {
-                    Long finishTime = input.getLong("finishTime");
-                    Long launchTime = input.getLong("launchTime");
-                    Long memorySeconds = input.getLong("memorySeconds");
-                    Long vcoreSeconds = input.getLong("vcoreSeconds");
-                    input.put("usedMemory", memorySeconds * 1000 / (finishTime - launchTime));
-                    input.put("usedCores", vcoreSeconds * 1000 / (finishTime - launchTime));
-                }
-                return input.toString();
+        SingleOutputStreamOperator<String> sinkStream = sourceStream.map((MapFunction<JSONObject, String>) input -> {
+            Integer usedMemory = input.getInteger("usedMemory");
+            Integer usedCores = input.getInteger("usedCores");
+            if (usedMemory == -1 && usedCores == -1) {
+                Long finishTime = input.getLong("finishTime");
+                Long launchTime = input.getLong("launchTime");
+                Long memorySeconds = input.getLong("memorySeconds");
+                Long vcoreSeconds = input.getLong("vcoreSeconds");
+                input.put("usedMemory", memorySeconds * 1000 / (finishTime - launchTime));
+                input.put("usedCores", vcoreSeconds * 1000 / (finishTime - launchTime));
             }
-        });
+            return input.toString();
+        }).returns(String.class);
 
         // 写数据到kafka
         Properties prop = new Properties();
