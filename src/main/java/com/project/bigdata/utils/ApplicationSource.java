@@ -43,10 +43,6 @@ public class ApplicationSource extends RichSourceFunction<JSONObject> {
                 map.put("applicationType", applicationType);
                 long startTime = app.getStartTime();
                 map.put("startTime", startTime);
-                long launchTime = app.getLaunchTime();
-                map.put("launchTime", launchTime);
-                long submitTime = app.getSubmitTime();
-                map.put("submitTime", submitTime);
                 long finishTime = app.getFinishTime();
                 map.put("finishTime", finishTime);
                 String curStatus = app.getYarnApplicationState().toString();
