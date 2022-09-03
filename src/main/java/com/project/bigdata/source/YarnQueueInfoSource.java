@@ -184,10 +184,12 @@ public class YarnQueueInfoSource extends RichSourceFunction<JSONObject> {
                 List<ApplicationReport> applications = item.getApplications();
                 ArrayList<JSONObject> appsList = new ArrayList<>();
                 if (applications != null) {
+                    System.out.println("一级队列：" + queueName + "，当前正在运行的任务个数：" + applications.size());
                     for (ApplicationReport app : applications) {
                         JSONObject jsonObject = new JSONObject();
                         ApplicationId applicationId = app.getApplicationId();
                         jsonObject.put("applicationId", applicationId);
+                        System.out.println("一级队列：" + queueName + ",运行的任务id：" + applicationId);
                         String name = app.getName();
                         jsonObject.put("appName", name);
                         // 应用程序的优先级
