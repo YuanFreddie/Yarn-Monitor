@@ -445,6 +445,7 @@ public class YarnQueueInfoSource extends RichSourceFunction<JSONObject> {
                             json.put("childAppsList", childAppsList);
                         }
                         childQueueList.add(json);
+                        result.put("childQueueList", childQueueList);
                     }
                 }
                 out.collect(result);
