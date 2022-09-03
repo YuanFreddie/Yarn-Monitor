@@ -92,7 +92,7 @@ public class YarnNodeInfoSource extends RichSourceFunction<JSONObject> {
                 jsonObject.put("lastHealthReportTime", lastHealthReportTime);
                 // 获取节点更新类型，null表示不存在更新类型
                 NodeUpdateType nodeUpdateType = node.getNodeUpdateType();
-                jsonObject.put("nodeUpdateType", nodeUpdateType.name());
+                jsonObject.put("nodeUpdateType", nodeUpdateType);
                 // 获取节点上分配的容器数
                 int numContainers = node.getNumContainers();
                 jsonObject.put("numContainers", numContainers);
