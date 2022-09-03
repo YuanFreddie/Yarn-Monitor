@@ -182,260 +182,272 @@ public class YarnQueueInfoSource extends RichSourceFunction<JSONObject> {
 
                 // 一级队列的所有作业信息
                 List<ApplicationReport> applications = item.getApplications();
+                ArrayList<JSONObject> appsList = new ArrayList<>();
                 if (applications != null) {
                     for (ApplicationReport app : applications) {
+                        JSONObject jsonObject = new JSONObject();
                         ApplicationId applicationId = app.getApplicationId();
-                        result.put("applicationId", applicationId);
+                        jsonObject.put("applicationId", applicationId);
                         String name = app.getName();
-                        result.put("appName", name);
+                        jsonObject.put("appName", name);
                         // 应用程序的优先级
                         int priority = app.getPriority().getPriority();
-                        result.put("appPriority", priority);
+                        jsonObject.put("appPriority", priority);
                         YarnApplicationState yarnApplicationState = app.getYarnApplicationState();
-                        result.put("yarnApplicationState", yarnApplicationState.toString());
+                        jsonObject.put("yarnApplicationState", yarnApplicationState.toString());
 
                         FinalApplicationStatus finalApplicationStatus = app.getFinalApplicationStatus();
-                        result.put("finalApplicationStatus", finalApplicationStatus.toString());
+                        jsonObject.put("finalApplicationStatus", finalApplicationStatus.toString());
                         String user = app.getUser();
-                        result.put("appUser", user);
+                        jsonObject.put("appUser", user);
 
                         String applicationType = app.getApplicationType();
-                        result.put("applicationType", applicationType);
+                        jsonObject.put("applicationType", applicationType);
                         ApplicationResourceUsageReport applicationResource = app.getApplicationResourceUsageReport();
                         long appUsedMemorySize = applicationResource.getUsedResources().getMemorySize();
-                        result.put("appUsedMemorySize", appUsedMemorySize);
+                        jsonObject.put("appUsedMemorySize", appUsedMemorySize);
                         // 获取该任务的资源虚拟cpu核心数
                         int virtualCores = applicationResource.getUsedResources().getVirtualCores();
-                        result.put("appVirtualCores", virtualCores);
+                        jsonObject.put("appVirtualCores", virtualCores);
 
                         List<ResourceInformation> appUsedResourceInfoList = applicationResource.getUsedResources().getAllResourcesListCopy();
-                        result.put("appUsedResourceInfoList", appUsedResourceInfoList);
+                        jsonObject.put("appUsedResourceInfoList", appUsedResourceInfoList);
 
                         long appReservedMemorySize = applicationResource.getReservedResources().getMemorySize();
-                        result.put("appReservedMemorySize", appReservedMemorySize);
+                        jsonObject.put("appReservedMemorySize", appReservedMemorySize);
                         int appReservedVirtualCores = applicationResource.getReservedResources().getVirtualCores();
-                        result.put("appReservedVirtualCores", appReservedVirtualCores);
+                        jsonObject.put("appReservedVirtualCores", appReservedVirtualCores);
                         List<ResourceInformation> appReversedResourceInfoList = applicationResource.getReservedResources().getAllResourcesListCopy();
-                        result.put("appReversedResourceInfoList", appReversedResourceInfoList);
+                        jsonObject.put("appReversedResourceInfoList", appReversedResourceInfoList);
 
                         int appNumUsedContainers = applicationResource.getNumUsedContainers();
-                        result.put("appNumUsedContainers", appNumUsedContainers);
+                        jsonObject.put("appNumUsedContainers", appNumUsedContainers);
 
                         int appNumReservedContainers = applicationResource.getNumReservedContainers();
-                        result.put("appNumReservedContainers", appNumReservedContainers);
+                        jsonObject.put("appNumReservedContainers", appNumReservedContainers);
 
                         // 获取应用程序使用的集群资源百分比
                         float clusterUsagePercentage = applicationResource.getClusterUsagePercentage();
-                        result.put("clusterUsagePercentage", clusterUsagePercentage);
+                        jsonObject.put("clusterUsagePercentage", clusterUsagePercentage);
 
                         // 获取应用程序正在使用的队列资源百分比
                         float queueUsagePercentage = applicationResource.getQueueUsagePercentage();
-                        result.put("queueUsagePercentage", queueUsagePercentage);
+                        jsonObject.put("queueUsagePercentage", queueUsagePercentage);
 
                         long appStartTime = app.getStartTime();
-                        result.put("appStartTime", appStartTime);
+                        jsonObject.put("appStartTime", appStartTime);
 
                         long appFinishTime = app.getFinishTime();
-                        result.put("appFinishTime", appFinishTime);
+                        jsonObject.put("appFinishTime", appFinishTime);
                         String appTrackingUrl = app.getTrackingUrl();
-                        result.put("appTrackingUrl", appTrackingUrl);
+                        jsonObject.put("appTrackingUrl", appTrackingUrl);
 
                         int appRpcPort = app.getRpcPort();
-                        result.put("appRpcPort", appRpcPort);
+                        jsonObject.put("appRpcPort", appRpcPort);
 
                         float appProgress = app.getProgress();
-                        result.put("appProgress", appProgress);
+                        jsonObject.put("appProgress", appProgress);
 
                         String appHost = app.getHost();
-                        result.put("appHost", appHost);
+                        jsonObject.put("appHost", appHost);
 
                         // 获取所有应用程序容器的默认节点标签表达式
                         String appAmNodeLabelExpression = app.getAmNodeLabelExpression();
-                        result.put("appAmNodeLabelExpression", appAmNodeLabelExpression);
+                        jsonObject.put("appAmNodeLabelExpression", appAmNodeLabelExpression);
 
                         Set<String> applicationTags = app.getApplicationTags();
-                        result.put("applicationTags", applicationTags);
+                        jsonObject.put("applicationTags", applicationTags);
 
                         LogAggregationStatus appLogAggregationStatus = app.getLogAggregationStatus();
-                        result.put("appLogAggregationStatus", appLogAggregationStatus);
+                        jsonObject.put("appLogAggregationStatus", appLogAggregationStatus);
 
-                        out.collect(result);
+                        appsList.add(jsonObject);
                     }
                 }
+                result.put("appsList", appsList);
                 // 一级队列的子队列
                 List<QueueInfo> childQueues = item.getChildQueues();
+                ArrayList<JSONObject> childQueueList = new ArrayList<>();
                 // 二级子队列信息数据获取
                 if (childQueues != null) {
                     for (QueueInfo child : childQueues) {
+                        JSONObject json = new JSONObject();
                         // 二级子队列的名字
                         String childQueueName = child.getQueueName();
-                        result.put("childQueueName", childQueueName);
+                        json.put("childQueueName", childQueueName);
                         // 二级子队列的每节点标签队列配置
                         Map<String, QueueConfigurations> childQueueConfigurations = child.getQueueConfigurations();
-                        result.put("childQueueConfigurations", childQueueConfigurations);
+                        json.put("childQueueConfigurations", childQueueConfigurations);
                         // 二级子队列当前状态
                         String childQueueState = child.getQueueState().toString();
-                        result.put("childQueueState", childQueueState);
+                        json.put("childQueueState", childQueueState);
                         QueueStatistics childQueueStatistics = child.getQueueStatistics();
-                        result.put("childQueueStatistics", childQueueStatistics);
+                        json.put("childQueueStatistics", childQueueStatistics);
                         // 二级子队列分配的Container容器个数
                         long childQueueAllocatedContainers = childQueueStatistics.getAllocatedContainers();
-                        result.put("childQueueAllocatedContainers", childQueueAllocatedContainers);
+                        json.put("childQueueAllocatedContainers", childQueueAllocatedContainers);
                         // 二级子队列被分配的内存大小(以MB为单位)
                         long childQueueAllocatedMemoryMB = childQueueStatistics.getAllocatedMemoryMB();
-                        result.put("childQueueAllocatedMemoryMB", childQueueAllocatedMemoryMB);
+                        json.put("childQueueAllocatedMemoryMB", childQueueAllocatedMemoryMB);
                         // 二级子队列被分配的vcores
                         long childQueueAllocatedVCores = childQueueStatistics.getAllocatedVCores();
-                        result.put("childQueueAllocatedVCores", childQueueAllocatedVCores);
+                        json.put("childQueueAllocatedVCores", childQueueAllocatedVCores);
                         // 二级子队列的可用内存(以MB为单位)
                         long childQueueAvailableMemoryMB = childQueueStatistics.getAvailableMemoryMB();
-                        result.put("childQueueAvailableMemoryMB", childQueueAvailableMemoryMB);
+                        json.put("childQueueAvailableMemoryMB", childQueueAvailableMemoryMB);
                         // 二级子队列的可用vcores
                         long childQueueAvailableVCores = childQueueStatistics.getAvailableVCores();
-                        result.put("childQueueAvailableVCores", childQueueAvailableVCores);
+                        json.put("childQueueAvailableVCores", childQueueAvailableVCores);
                         // 二级子队列的活跃用户数
                         long childQueueNumActiveUsers = childQueueStatistics.getNumActiveUsers();
-                        result.put("childQueueNumActiveUsers", childQueueNumActiveUsers);
+                        json.put("childQueueNumActiveUsers", childQueueNumActiveUsers);
                         // 二级子队列已完成的app个数
                         long childQueueNumAppsCompleted = childQueueStatistics.getNumAppsCompleted();
-                        result.put("childQueueNumAppsCompleted", childQueueNumAppsCompleted);
+                        json.put("childQueueNumAppsCompleted", childQueueNumAppsCompleted);
                         // 二级子队列失败的app个数
                         long childQueueNumAppsFailed = childQueueStatistics.getNumAppsFailed();
-                        result.put("childQueueNumAppsFailed", childQueueNumAppsFailed);
+                        json.put("childQueueNumAppsFailed", childQueueNumAppsFailed);
                         // 二级子队列被kill掉的app个数
                         long childQueueNumAppsKilled = childQueueStatistics.getNumAppsKilled();
-                        result.put("childQueueNumAppsKilled", childQueueNumAppsKilled);
+                        json.put("childQueueNumAppsKilled", childQueueNumAppsKilled);
                         // 二级子队列状态为pending的app个数
                         long childQueueNumAppsPending = childQueueStatistics.getNumAppsPending();
-                        result.put("childQueueNumAppsPending", childQueueNumAppsPending);
+                        json.put("childQueueNumAppsPending", childQueueNumAppsPending);
                         // 二级子队列正在运行的app个数
                         long childQueueNumAppsRunning = childQueueStatistics.getNumAppsRunning();
-                        result.put("childQueueNumAppsRunning", childQueueNumAppsRunning);
+                        json.put("childQueueNumAppsRunning", childQueueNumAppsRunning);
                         // 二级子队列提交的app数量
                         long childQueueNumAppsSubmitted = childQueueStatistics.getNumAppsSubmitted();
-                        result.put("childQueueNumAppsSubmitted", childQueueNumAppsSubmitted);
+                        json.put("childQueueNumAppsSubmitted", childQueueNumAppsSubmitted);
                         // 二级子队列待处理container容器的数量
                         long childQueuePendingContainers = childQueueStatistics.getPendingContainers();
-                        result.put("childQueuePendingContainers", childQueuePendingContainers);
+                        json.put("childQueuePendingContainers", childQueuePendingContainers);
                         // 二级子队列待处理的内存(MB)
                         long childQueuePendingMemoryMB = childQueueStatistics.getPendingMemoryMB();
-                        result.put("childQueuePendingMemoryMB", childQueuePendingMemoryMB);
+                        json.put("childQueuePendingMemoryMB", childQueuePendingMemoryMB);
                         // 二级子队列待处理的vcores
                         long childQueuePendingVCores = childQueueStatistics.getPendingVCores();
-                        result.put("childQueuePendingVCores", childQueuePendingVCores);
+                        json.put("childQueuePendingVCores", childQueuePendingVCores);
                         // 二级子队列预留Container容器的数量
                         long childQueueReservedContainers = childQueueStatistics.getReservedContainers();
-                        result.put("childQueueReservedContainers", childQueueReservedContainers);
+                        json.put("childQueueReservedContainers", childQueueReservedContainers);
                         // 二级子队列预留的内存
                         long childQueueReservedMemoryMB = childQueueStatistics.getReservedMemoryMB();
-                        result.put("childQueueReservedMemoryMB", childQueueReservedMemoryMB);
+                        json.put("childQueueReservedMemoryMB", childQueueReservedMemoryMB);
                         // 二级子队列预留的vcores
                         long childQueueReservedVCores = childQueueStatistics.getReservedVCores();
-                        result.put("childQueueReservedVCores", childQueueReservedVCores);
+                        json.put("childQueueReservedVCores", childQueueReservedVCores);
 
                         // 二级子队列的可访问节点标签
                         Set<String> childQueueAccessibleNodeLabels = child.getAccessibleNodeLabels();
-                        result.put("childQueueAccessibleNodeLabels", childQueueAccessibleNodeLabels);
+                        json.put("childQueueAccessibleNodeLabels", childQueueAccessibleNodeLabels);
                         // 二级子队列的配置容量
                         float childQueueCapacity = child.getCapacity();
-                        result.put("childQueueCapacity", childQueueCapacity);
+                        json.put("childQueueCapacity", childQueueCapacity);
                         // 二级子队列的当前容量
                         float childQueueCurrentCapacity = child.getCurrentCapacity();
-                        result.put("childQueueCurrentCapacity", childQueueCurrentCapacity);
+                        json.put("childQueueCurrentCapacity", childQueueCurrentCapacity);
                         // 二级子队列的默认节点标签表达式
                         String childQueueDefaultNodeLabelExpression = child.getDefaultNodeLabelExpression();
-                        result.put("childQueueDefaultNodeLabelExpression", childQueueDefaultNodeLabelExpression);
+                        json.put("childQueueDefaultNodeLabelExpression", childQueueDefaultNodeLabelExpression);
                         // 二级子队列的队列内抢占状态, 如果属性不在proto中，则返回null； 否则返回队列的队列内抢占状态
                         Boolean childQueueIntraQueuePreemptionDisabled = child.getIntraQueuePreemptionDisabled();
-                        result.put("childQueueIntraQueuePreemptionDisabled", childQueueIntraQueuePreemptionDisabled);
+                        json.put("childQueueIntraQueuePreemptionDisabled", childQueueIntraQueuePreemptionDisabled);
                         // 二级子队列的最大容量
                         float childQueueMaximumCapacity = child.getMaximumCapacity();
-                        result.put("childQueueMaximumCapacity", childQueueMaximumCapacity);
+                        json.put("childQueueMaximumCapacity", childQueueMaximumCapacity);
                         // 二级子队列的抢占状态.如果属性不在proto中，则返回null； 否则返回队列的抢占状态
                         Boolean childQueuePreemptionDisabled = child.getPreemptionDisabled();
-                        result.put("childQueuePreemptionDisabled", childQueuePreemptionDisabled);
+                        json.put("childQueuePreemptionDisabled", childQueuePreemptionDisabled);
                         // 获取子队列正在运行的任务信息
                         List<ApplicationReport> apps = child.getApplications();
-                        for (ApplicationReport app : apps) {
-                            ApplicationId applicationId = app.getApplicationId();
-                            result.put("applicationId", applicationId);
-                            String name = app.getName();
-                            result.put("appName", name);
-                            // 应用程序的优先级
-                            int priority = app.getPriority().getPriority();
-                            result.put("appPriority", priority);
-                            YarnApplicationState yarnApplicationState = app.getYarnApplicationState();
-                            result.put("yarnApplicationState", yarnApplicationState.toString());
+                        ArrayList<JSONObject> childAppsList = new ArrayList<>();
+                        if (apps != null) {
+                            for (ApplicationReport app : apps) {
+                                JSONObject tempJson = new JSONObject();
+                                ApplicationId applicationId = app.getApplicationId();
+                                tempJson.put("applicationId", applicationId);
+                                String name = app.getName();
+                                tempJson.put("appName", name);
+                                // 应用程序的优先级
+                                int priority = app.getPriority().getPriority();
+                                tempJson.put("appPriority", priority);
+                                YarnApplicationState yarnApplicationState = app.getYarnApplicationState();
+                                tempJson.put("yarnApplicationState", yarnApplicationState.toString());
 
-                            FinalApplicationStatus finalApplicationStatus = app.getFinalApplicationStatus();
-                            result.put("finalApplicationStatus", finalApplicationStatus.toString());
-                            String user = app.getUser();
-                            result.put("appUser", user);
+                                FinalApplicationStatus finalApplicationStatus = app.getFinalApplicationStatus();
+                                tempJson.put("finalApplicationStatus", finalApplicationStatus.toString());
+                                String user = app.getUser();
+                                tempJson.put("appUser", user);
 
-                            String applicationType = app.getApplicationType();
-                            result.put("applicationType", applicationType);
-                            ApplicationResourceUsageReport applicationResource = app.getApplicationResourceUsageReport();
-                            long appUsedMemorySize = applicationResource.getUsedResources().getMemorySize();
-                            result.put("appUsedMemorySize", appUsedMemorySize);
-                            // 获取该任务的资源虚拟cpu核心数
-                            int virtualCores = applicationResource.getUsedResources().getVirtualCores();
-                            result.put("appVirtualCores", virtualCores);
+                                String applicationType = app.getApplicationType();
+                                tempJson.put("applicationType", applicationType);
+                                ApplicationResourceUsageReport applicationResource = app.getApplicationResourceUsageReport();
+                                long appUsedMemorySize = applicationResource.getUsedResources().getMemorySize();
+                                tempJson.put("appUsedMemorySize", appUsedMemorySize);
+                                // 获取该任务的资源虚拟cpu核心数
+                                int virtualCores = applicationResource.getUsedResources().getVirtualCores();
+                                tempJson.put("appVirtualCores", virtualCores);
 
-                            List<ResourceInformation> appUsedResourceInfoList = applicationResource.getUsedResources().getAllResourcesListCopy();
-                            result.put("appUsedResourceInfoList", appUsedResourceInfoList);
+                                List<ResourceInformation> appUsedResourceInfoList = applicationResource.getUsedResources().getAllResourcesListCopy();
+                                tempJson.put("appUsedResourceInfoList", appUsedResourceInfoList);
 
-                            long appReservedMemorySize = applicationResource.getReservedResources().getMemorySize();
-                            result.put("appReservedMemorySize", appReservedMemorySize);
-                            int appReservedVirtualCores = applicationResource.getReservedResources().getVirtualCores();
-                            result.put("appReservedVirtualCores", appReservedVirtualCores);
-                            List<ResourceInformation> appReversedResourceInfoList = applicationResource.getReservedResources().getAllResourcesListCopy();
-                            result.put("appReversedResourceInfoList", appReversedResourceInfoList);
+                                long appReservedMemorySize = applicationResource.getReservedResources().getMemorySize();
+                                tempJson.put("appReservedMemorySize", appReservedMemorySize);
+                                int appReservedVirtualCores = applicationResource.getReservedResources().getVirtualCores();
+                                tempJson.put("appReservedVirtualCores", appReservedVirtualCores);
+                                List<ResourceInformation> appReversedResourceInfoList = applicationResource.getReservedResources().getAllResourcesListCopy();
+                                tempJson.put("appReversedResourceInfoList", appReversedResourceInfoList);
 
-                            int appNumUsedContainers = applicationResource.getNumUsedContainers();
-                            result.put("appNumUsedContainers", appNumUsedContainers);
+                                int appNumUsedContainers = applicationResource.getNumUsedContainers();
+                                tempJson.put("appNumUsedContainers", appNumUsedContainers);
 
-                            int appNumReservedContainers = applicationResource.getNumReservedContainers();
-                            result.put("appNumReservedContainers", appNumReservedContainers);
+                                int appNumReservedContainers = applicationResource.getNumReservedContainers();
+                                tempJson.put("appNumReservedContainers", appNumReservedContainers);
 
-                            // 获取应用程序使用的集群资源百分比
-                            float clusterUsagePercentage = applicationResource.getClusterUsagePercentage();
-                            result.put("clusterUsagePercentage", clusterUsagePercentage);
+                                // 获取应用程序使用的集群资源百分比
+                                float clusterUsagePercentage = applicationResource.getClusterUsagePercentage();
+                                tempJson.put("clusterUsagePercentage", clusterUsagePercentage);
 
-                            // 获取应用程序正在使用的队列资源百分比
-                            float queueUsagePercentage = applicationResource.getQueueUsagePercentage();
-                            result.put("queueUsagePercentage", queueUsagePercentage);
+                                // 获取应用程序正在使用的队列资源百分比
+                                float queueUsagePercentage = applicationResource.getQueueUsagePercentage();
+                                tempJson.put("queueUsagePercentage", queueUsagePercentage);
 
-                            long appStartTime = app.getStartTime();
-                            result.put("appStartTime", appStartTime);
+                                long appStartTime = app.getStartTime();
+                                tempJson.put("appStartTime", appStartTime);
 
-                            long appFinishTime = app.getFinishTime();
-                            result.put("appFinishTime", appFinishTime);
-                            String appTrackingUrl = app.getTrackingUrl();
-                            result.put("appTrackingUrl", appTrackingUrl);
+                                long appFinishTime = app.getFinishTime();
+                                tempJson.put("appFinishTime", appFinishTime);
+                                String appTrackingUrl = app.getTrackingUrl();
+                                tempJson.put("appTrackingUrl", appTrackingUrl);
 
-                            int appRpcPort = app.getRpcPort();
-                            result.put("appRpcPort", appRpcPort);
+                                int appRpcPort = app.getRpcPort();
+                                tempJson.put("appRpcPort", appRpcPort);
 
-                            float appProgress = app.getProgress();
-                            result.put("appProgress", appProgress);
+                                float appProgress = app.getProgress();
+                                tempJson.put("appProgress", appProgress);
 
-                            String appHost = app.getHost();
-                            result.put("appHost", appHost);
+                                String appHost = app.getHost();
+                                tempJson.put("appHost", appHost);
 
-                            // 获取所有应用程序容器的默认节点标签表达式
-                            String appAmNodeLabelExpression = app.getAmNodeLabelExpression();
-                            result.put("appAmNodeLabelExpression", appAmNodeLabelExpression);
+                                // 获取所有应用程序容器的默认节点标签表达式
+                                String appAmNodeLabelExpression = app.getAmNodeLabelExpression();
+                                tempJson.put("appAmNodeLabelExpression", appAmNodeLabelExpression);
 
-                            Set<String> applicationTags = app.getApplicationTags();
-                            result.put("applicationTags", applicationTags);
+                                Set<String> applicationTags = app.getApplicationTags();
+                                tempJson.put("applicationTags", applicationTags);
 
-                            LogAggregationStatus appLogAggregationStatus = app.getLogAggregationStatus();
-                            result.put("appLogAggregationStatus", appLogAggregationStatus);
+                                LogAggregationStatus appLogAggregationStatus = app.getLogAggregationStatus();
+                                tempJson.put("appLogAggregationStatus", appLogAggregationStatus);
 
-                            out.collect(result);
+                                childAppsList.add(tempJson);
+                            }
+                            json.put("childAppsList", childAppsList);
                         }
+                        childQueueList.add(json);
                     }
                 }
+                out.collect(result);
             }
             Thread.sleep(5 * 60 * 1000);
         }

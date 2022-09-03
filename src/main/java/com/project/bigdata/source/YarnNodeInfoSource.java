@@ -7,6 +7,7 @@ import org.apache.hadoop.yarn.api.records.*;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ public class YarnNodeInfoSource extends RichSourceFunction<JSONObject> {
             // 获取集群中重新启动的NodeManager数量
             int numRebootedNodeManagers = yarnClusterMetrics.getNumRebootedNodeManagers();
             resultJson.put("numRebootedNodeManagers", numRebootedNodeManagers);
+            ArrayList<JSONObject> tempList = new ArrayList<>();
             for (NodeReport node : nodeReports) {
                 JSONObject jsonObject = new JSONObject();
                 NodeId nodeId = node.getNodeId();
@@ -112,8 +114,9 @@ public class YarnNodeInfoSource extends RichSourceFunction<JSONObject> {
                     List<ResourceInformation> allResourcesListCopy = usedResource.getAllResourcesListCopy();
                     jsonObject.put("usedResourceInformationList", allResourcesListCopy);
                 }
-                resultJson.put("nodeManagerInfo", jsonObject);
+                tempList.add(jsonObject);
             }
+            resultJson.put("nodeManagerInfoList", tempList);
             collect.collect(resultJson);
             Thread.sleep(5 * 60 * 1000);
         }
