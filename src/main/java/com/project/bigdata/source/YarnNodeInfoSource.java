@@ -66,14 +66,14 @@ public class YarnNodeInfoSource extends RichSourceFunction<JSONObject> {
                 jsonObject.put("memorySize", memorySize);
                 // 获取节点状态
                 NodeState nodeState = node.getNodeState();
-                jsonObject.put("nodeState", nodeState);
+                jsonObject.put("nodeState", nodeState.toString());
                 // 获取节点的http地址
                 String httpAddress = node.getHttpAddress();
                 jsonObject.put("httpAddress", httpAddress);
                 // 获取该节点的标签
                 Set<String> nodeLabels = node.getNodeLabels();
                 jsonObject.put("nodeLabels", nodeLabels);
-                // 获取接待你资源利用情况数据
+                // 获取该节点资源利用情况数据
                 ResourceUtilization nodeResource = node.getAggregatedContainersUtilization();
                 // 获取该节点使用的虚拟内存
                 int virtualMemory = nodeResource.getVirtualMemory();
@@ -101,15 +101,17 @@ public class YarnNodeInfoSource extends RichSourceFunction<JSONObject> {
                 jsonObject.put("rackName", rackName);
                 // 获取节点上正在使用的资源信息
                 Resource usedResource = node.getUsed();
-                // 获取该节点正在被使用的内存
-                long usedMemorySize = usedResource.getMemorySize();
-                jsonObject.put("usedMemorySize", usedMemorySize);
-                // 获取该节点正在被使用的vcores
-                int usedVirtualCores = usedResource.getVirtualCores();
-                jsonObject.put("usedVirtualCores", usedVirtualCores);
-                // 获取正在被使用的资源信息列表
-                List<ResourceInformation> allResourcesListCopy = usedResource.getAllResourcesListCopy();
-                jsonObject.put("usedResourceInformationList", allResourcesListCopy);
+                if (usedResource != null) {
+                    // 获取该节点正在被使用的内存
+                    long usedMemorySize = usedResource.getMemorySize();
+                    jsonObject.put("usedMemorySize", usedMemorySize);
+                    // 获取该节点正在被使用的vcores
+                    int usedVirtualCores = usedResource.getVirtualCores();
+                    jsonObject.put("usedVirtualCores", usedVirtualCores);
+                    // 获取正在被使用的资源信息列表
+                    List<ResourceInformation> allResourcesListCopy = usedResource.getAllResourcesListCopy();
+                    jsonObject.put("usedResourceInformationList", allResourcesListCopy);
+                }
                 resultJson.put("nodeManagerInfo", jsonObject);
             }
             collect.collect(resultJson);
