@@ -1,8 +1,8 @@
 package com.project.bigdata.apps;
 
 import com.alibaba.fastjson.JSONObject;
+import com.project.bigdata.source.ApplicationSource;
 import com.project.bigdata.source.YarnNodeInfoSource;
-import com.project.bigdata.source.YarnQueueInfoSource;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
@@ -11,7 +11,7 @@ public class YarnMonitorInfoReport {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // source
-        DataStreamSource<JSONObject> queueJson = env.addSource(new YarnQueueInfoSource());
+        DataStreamSource<JSONObject> queueJson = env.addSource(new ApplicationSource());
         DataStreamSource<JSONObject> nodeSource = env.addSource(new YarnNodeInfoSource());
 
         // transformation
