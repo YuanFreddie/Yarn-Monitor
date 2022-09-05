@@ -26,9 +26,9 @@ public class ApplicationSource extends RichSourceFunction<JSONObject> {
     @Override
     public void run(SourceContext<JSONObject> out) throws Exception {
         while (true) {
-            Set<String> status = new HashSet<>();
-            status.add("RUNNING");
-            List<ApplicationReport> apps = yarnClient.getApplications(status);
+            EnumSet<YarnApplicationState> appStates = EnumSet.noneOf(YarnApplicationState.class);
+            appStates.add(YarnApplicationState.RUNNING);
+            List<ApplicationReport> apps = yarnClient.getApplications(appStates);
             for (ApplicationReport app : apps) {
                 JSONObject result = new JSONObject();
                 String applicationId = app.getApplicationId().toString();
