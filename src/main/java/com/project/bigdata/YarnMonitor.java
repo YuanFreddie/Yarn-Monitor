@@ -27,9 +27,9 @@ public class YarnMonitor {
                 Long finishTime = input.getLong("finishTime");
                 Long launchTime = input.getLong("launchTime");
                 Long memorySeconds = input.getLong("memorySeconds");
-                Long vcoreSeconds = input.getLong("vcoreSeconds");
+                Long vCoreSeconds = input.getLong("vcoreSeconds");
                 input.put("usedMemory", memorySeconds * 1000 / (finishTime - launchTime));
-                input.put("usedCores", vcoreSeconds * 1000 / (finishTime - launchTime));
+                input.put("usedCores", vCoreSeconds * 1000 / (finishTime - launchTime));
             }
             return input.toString();
         }).returns(String.class);
